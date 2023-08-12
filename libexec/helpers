@@ -28,13 +28,13 @@ function curlw () {
 sls_platform() {
   local arch
   case "$(uname -m)" in
-    x86_64) arch='amd64';;
+    x86_64) arch='x64';;
     *)      error_and_die "Unrecognized/unsupported architecture $(uname -m)";;
   esac
   local os
   case "$(uname -s)" in
-    Darwin*)                      os="darwin";;
-    MINGW64*|MSYS_NT*|CYGWIN_NT*) os="windows";;
+    Darwin*)                      os="macos";;
+    MINGW64*|MSYS_NT*|CYGWIN_NT*) os="win";;
     Linux*)                       os="linux";;
     *)                            error_and_die "Unrecognized/unsupported kernel $(uname -s)"
   esac
