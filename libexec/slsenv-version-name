@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Summary: Show the current Kops version
+set -e
+
+[ -n "${SLSENV_DEBUG}" ] && set -x
+source ${SLSENV_ROOT}/libexec/helpers
+
+[ -d "${SLSENV_ROOT}/versions" ] \
+  || error_and_die "No versions of sls installed. Please install one with: slsenv install"
+
+SLSENV_VERSION_FILE="$(slsenv-version-file)"
+SLSENV_VERSION="$(cat "${SLSENV_VERSION_FILE}" || true)"
+
+if [[ "${SLSENV_VERSION}" =~ ^latest.*$ ]]; then
+  [[ "${SLSENV_VERSION}" =~ ^latest\:.*$ ]] && regex="${SLSENV_VERSION##*\:}"
+  version="$(\ls "${SLSENV_ROOT}/versions" \
+    | sort -t'.' -k 1nr,1 -k 2nr,2 -k 3nr,3 \
+    | grep -e "${regex}" \
+    | head -n 1
+  )"
+  [ -n "${version}" ] || error_and_die "No installed versions of sls matched '${SLSENV_VERSION}'"
+  SLSENV_VERSION="${version}"
+fi
+
+[ -z "${SLSENV_VERSION}" ] \
+  && error_and_die "Version could not be resolved (set by ${SLSENV_VERSION_FILE} or slsenv use <version>)"
+
+version_exists() {
+  local version="${1}"
+  [ -d "${SLSENV_ROOT}/versions/${version}" ]
+}
+
+if version_exists "${SLSENV_VERSION}"; then
+  echo "${SLSENV_VERSION}"
+else
+  error_and_die "version \`${SLSENV_VERSION}' is not installed (set by ${SLSENV_VERSION_FILE})"
+fi

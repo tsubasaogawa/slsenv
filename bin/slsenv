@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -e
+if [ -n "$SLSENV_DEBUG" ]; then
+  export PS4='+ [${BASH_SOURCE##*/}:${LINENO}] '
+  set -x
+fi
+
+# http://stackoverflow.com/questions/1055671/how-can-i-get-the-behavior-of-gnus-readlink-f-on-a-mac
+readlink_f() {
+  local target_file=$1
+  local file_name
+
+  while [ "$target_file" != "" ]; do
+    cd $(dirname ${target_file})
+    file_name=$(basename ${target_file})
+    target_file=$(readlink ${file_name})
+  done
+
+  echo $(pwd -P)/${file_name}
+}
+
+if [ -z "${SLSENV_ROOT}" ]; then
+  SLSENV_ROOT=$(cd $(dirname $(readlink_f $0))/.. && pwd)
+else
+  SLSENV_ROOT="${SLSENV_ROOT%/}"
+fi
+export SLSENV_ROOT
+PATH="${SLSENV_ROOT}/libexec:${PATH}"
+export PATH
+export SLSENV_DIR="${PWD}"
+
+abort() {
+  {
+    if [ "$#" -eq 0 ]; then
+      cat -
+    else
+      echo "slsenv: $*"
+    fi
+  } >&2
+  exit 1
+}
+
+command="$1"
+case "$command" in
+  '')            {
+                   slsenv-version
+                   slsenv-help
+                 } | abort;;
+  -v|--version)  exec slsenv-version;;
+  -h|--help)     exec slsenv-help;;
+  *)             command_path="$(command -v "slsenv-${command}" || true)"
+                 if [ -z "$command_path" ]; then
+                   {
+                     echo "no such command '$command'"
+                     slsenv-help
+                   } | abort
+                 fi
+                 shift 1
+                 exec "$command_path" "$@";;
+esac

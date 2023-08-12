@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Usage: slsenv version-file
+# Summary: Detect the file that sets the current slsenv version
+set -e
+[ -n "${SLSENV_DEBUG}" ] && set -x
+
+find_local_version_file() {
+  local root="${1}"
+  while ! [[ "${root}" =~ ^//[^/]*$ ]]; do
+    if [ -e "${root}/.sls-version" ]; then
+      echo "${root}/.sls-version"
+      return 0
+    fi
+    [ -n "${root}" ] || break
+    root="${root%/*}"
+  done
+  return 1
+}
+
+find_local_version_file "${SLSENV_DIR}" || find_local_version_file "${HOME}" || echo "${SLSENV_ROOT}/version"

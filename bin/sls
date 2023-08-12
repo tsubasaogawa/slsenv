@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+[ -n "$SLSENV_DEBUG" ] && set -x
+
+program="${0##*/}"
+exec "$(dirname `which $0`)"/slsenv exec "$@"
