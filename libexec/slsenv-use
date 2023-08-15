@@ -43,7 +43,7 @@ version="$(\ls "${SLSENV_ROOT}/versions" \
 
 [ -n "${version}" ] || error_and_die "No installed versions of sls matched '${1}'"
 
-target_path=${SLSENV_ROOT}/versions/${version}
+target_path=${SLSENV_ROOT}/versions/${version}/bin
 [ -f ${target_path}/sls ] \
   || error_and_die "Version directory for ${version} is present, but the sls binary is not! Manual intervention required."
 [ -x ${target_path}/sls ] \
@@ -51,5 +51,5 @@ target_path=${SLSENV_ROOT}/versions/${version}
 
 info "Switching to v${version}"
 echo "${version}" > "$(slsenv-version-file)" || error_and_die "'switch to v${version} failed'"
-sls version client 1>/dev/null || error_and_die "'sls version client' failed. Something is seriously wrong"
+sls --version 1>/dev/null || error_and_die "'sls --version' failed. Something is seriously wrong"
 info "Switching completed"
