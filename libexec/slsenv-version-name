@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Summary: Show the current Kops version
+# Summary: Show the current sls version
 set -e
 
 [ -n "${SLSENV_DEBUG}" ] && set -x

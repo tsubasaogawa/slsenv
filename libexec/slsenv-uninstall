@@ -33,8 +33,8 @@ version="$(slsenv-list | sed -E 's/^(\*| )? //g; s/ \(set by .+\)$//' | grep -e 
 
 dst_path="${SLSENV_ROOT}/versions/${version}"
 if [ -f "${dst_path}/bin/sls" ]; then 
-  info "Uninstall Serverless v${version}"
+  info "Uninstall Serverless ${version}"
   rm -r "${dst_path}"
-  info "\033[0;32mServerless v${version} is successfully uninstalled\033[0;39m"
+  info "\033[0;32mServerless ${version} is successfully uninstalled\033[0;39m"
 fi
 
