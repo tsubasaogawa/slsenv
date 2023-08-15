@@ -11,15 +11,14 @@ fi
 platform="$(sls_platform)"
 (( "$?" )) && exit $?
 
-# This is a bit hacky since it's relying on the formatting of URLs
-# returned in JSON output from the github API, but there's no other
-# reasonable way to get a list of the current sls versions using
-# only curl + POSIX tools
-git ls-remote https://github.com/serverless/serverless.git \
+versions=$(git ls-remote https://github.com/serverless/serverless.git \
   | grep -v '\^' \
   | awk '/refs\/tags/{ print $2}' \
   | grep -v '-' \
   | awk -F / '{print $3}' \
   | grep -ve '^v\.' \
   | sort --version-sort --reverse \
-  | uniq
+  | uniq)
+
+# Binary exists above v1.57.0 in GitHub Releases
+echo "$versions" | head -n $(echo "$versions" | grep -n 'v1.57.0' | cut -d':' -f1)
