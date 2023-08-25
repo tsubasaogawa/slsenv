@@ -11,7 +11,7 @@
 set -e
 [ -n "${SLSENV_DEBUG}" ] && set -x
 
-export SLSENV_VERSION="$(slsenv-version-name)"
+export SLSENV_VERSION="$(slsenv-version-name)" || exit 1
 SLS_BIN_PATH="${SLSENV_ROOT}/versions/${SLSENV_VERSION}/bin/sls"
 export PATH="${SLS_BIN_PATH}:${PATH}"
 "${SLS_BIN_PATH}" "${@}"

@@ -14,7 +14,7 @@ SLSENV_VERSION="$(cat "${SLSENV_VERSION_FILE}" || true)"
 if [[ "${SLSENV_VERSION}" =~ ^latest.*$ ]]; then
   [[ "${SLSENV_VERSION}" =~ ^latest\:.*$ ]] && regex="${SLSENV_VERSION##*\:}"
   version="$(\ls "${SLSENV_ROOT}/versions" \
-    | sort -t'.' -k 1nr,1 -k 2nr,2 -k 3nr,3 \
+    | sort --version-sort --reverse \
     | grep -e "${regex}" \
     | head -n 1
   )"
@@ -30,8 +30,9 @@ version_exists() {
   [ -d "${SLSENV_ROOT}/versions/${version}" ]
 }
 
-if version_exists "${SLSENV_VERSION}"; then
-  echo "${SLSENV_VERSION}"
-else
-  error_and_die "version \`${SLSENV_VERSION}' is not installed (set by ${SLSENV_VERSION_FILE})"
+if ! version_exists "${SLSENV_VERSION}"; then
+  echo "version \`${SLSENV_VERSION}' is not installed (set by ${SLSENV_VERSION_FILE})" 1>&2
+  slsenv-install ${SLSENV_VERSION} 1>&2
 fi
+
+echo "${SLSENV_VERSION}"
