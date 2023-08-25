@@ -56,14 +56,32 @@ v3.32.1
 ...
 ```
 
-<!--
 ## .sls-version file
 
 If you put a `.sls-version` file on your project root, or in your home directory, slsenv detects it and uses the version written in it. If the version is `latest` or `latest:<regex>`, the latest matching version currently installed will be selected.
 
-```console
+```sh
+$ echo v3.32.0 > .sls-version
+
+$ sls --version
+Framework Core: 3.32.0 (standalone)
+Plugin: 6.2.3
+SDK: 4.3.2
+
+$ echo v3.34.0 > .sls-version
+
+$ sls --version
+Framework Core: 3.34.0 (standalone)
+Plugin: 6.2.3
+SDK: 4.3.2
+
+$ echo latest:^v3.32 > .sls-version
+
+$ sls --version
+Framework Core: 3.32.0 (standalone)
+Plugin: 6.2.3
+SDK: 4.3.2
 ```
--->
 
 ## Upgrading
 
